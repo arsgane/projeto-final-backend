@@ -1,0 +1,7 @@
+PUT http://127.0.0.1:5000/servicos/1
+Content-Type: application/json
+
+{
+  "nome": "Banho Premium",
+  "descricao": "Banho com shampoo especial e secagem profissional"
+}

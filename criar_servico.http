@@ -1,0 +1,8 @@
+POST http://127.0.0.1:5000/servicos
+Content-Type: application/json
+
+{
+  "nome": "Banho e Tosa",
+  "descricao": "Serviço completo de banho e tosa para pets",
+  "preco": 59.90
+}

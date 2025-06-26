@@ -1,0 +1,8 @@
+POST http://127.0.0.1:5000/pets
+Content-Type: application/json
+
+{
+  "nome": "Rex",
+  "especie": "Cachorro",
+  "cliente_id": 1
+}
