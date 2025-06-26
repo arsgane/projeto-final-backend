@@ -6,15 +6,19 @@ from routes.pet_route import pet_route
 from routes.servico_route import servico_route
 from routes.agendamento_route import agendamento_route
 
-
-
-
 app = Flask(__name__)
+
+# Configurações do banco de dados
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:12345@localhost:5432/petshop'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Permite acentuação nos retornos JSON (ex: "Já", "é", "não")
+app.config['JSON_AS_ASCII'] = False
+
+# Inicializa o banco
 db.init_app(app)
 
+# Rota base
 @app.route('/')
 def home():
     return 'API funcionando! Vá para /api/hello para ver o Olá, mundo.'
@@ -26,11 +30,8 @@ app.register_blueprint(pet_route)
 app.register_blueprint(servico_route)
 app.register_blueprint(agendamento_route)
 
-
-
+# Executa a aplicação
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Cria as tabelas no banco
+        db.create_all()  # Cria as tabelas no banco, se não existirem
     app.run(debug=True, host='127.0.0.1', port=5000)
-
-
