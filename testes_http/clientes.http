@@ -1,0 +1,25 @@
+### Criar cliente fixo
+POST http://localhost:5000/clientes
+Content-Type: application/json
+
+{
+  "nome": "Carlos Silva",
+  "email": "carlos@teste.com",
+  "telefone": "11999998888"
+}
+
+### Listar clientes
+GET http://localhost:5000/clientes
+
+### Atualizar cliente fixo
+PUT http://localhost:5000/clientes/1
+Content-Type: application/json
+
+{
+  "nome": "Carlos Atualizado",
+  "email": "carlos_atualizado@teste.com",
+  "telefone": "11999997777"
+}
+
+### Deletar cliente fixo
+DELETE http://localhost:5000/clientes/1

@@ -1,0 +1,25 @@
+### Criar pet fixo
+POST http://localhost:5000/pets
+Content-Type: application/json
+
+{
+  "nome": "Rex",
+  "especie": "Cachorro",
+  "cliente_id": 1
+}
+
+### Listar pets
+GET http://localhost:5000/pets
+
+### Atualizar pet fixo
+PUT http://localhost:5000/pets/2
+Content-Type: application/json
+
+{
+  "nome": "Rex Atualizado",
+  "especie": "Cachorro Bravo",
+  "cliente_id": 1
+}
+
+### Deletar pet fixo
+DELETE http://localhost:5000/pets/2

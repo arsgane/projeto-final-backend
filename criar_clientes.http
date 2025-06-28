@@ -1,8 +1,0 @@
-POST http://127.0.0.1:5000/clientes
-Content-Type: application/json
-
-{
-  "nome": "Carlos Silva",
-  "email": "carlos@teste.com",
-  "telefone": "11999998888"
-}

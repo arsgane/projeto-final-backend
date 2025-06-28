@@ -1,0 +1,20 @@
+# ▶️ Arquivos Python compilados
+__pycache__/
+*.py[cod]
+
+# 📁 Ambiente virtual
+venv/
+.env/
+
+# 🧪 Instância do banco
+instance/
+
+# 🧪 Arquivos temporários ou de testes
+*.db
+*.sqlite3
+*.log
+.DS_Store
+thunder-tests/
+
+# ⚙️ VSCode
+.vscode/

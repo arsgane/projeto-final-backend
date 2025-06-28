@@ -1,8 +1,0 @@
-POST http://127.0.0.1:5000/agendamentos
-Content-Type: application/json
-
-{
-  "data_hora": "2025-07-01 14:30",
-  "pet_id": 1,
-  "servico_id": 1
-}

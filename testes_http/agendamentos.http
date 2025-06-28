@@ -1,0 +1,25 @@
+### Criar agendamento fixo
+POST http://localhost:5000/agendamentos
+Content-Type: application/json
+
+{
+  "data_hora": "2025-07-01 14:30",
+  "pet_id": 2,
+  "servico_id": 1
+}
+
+### Listar agendamentos
+GET http://localhost:5000/agendamentos
+
+### Atualizar agendamento fixo
+PUT http://localhost:5000/agendamentos/2
+Content-Type: application/json
+
+{
+  "data_hora": "2025-07-02 16:00",
+  "pet_id": 2,
+  "servico_id": 1
+}
+
+### Deletar agendamento fixo
+DELETE http://localhost:5000/agendamentos/2

@@ -6,25 +6,33 @@ from controllers.servico_controller import (
     deletar_servico
 )
 
-# Criação do blueprint para rotas de serviços
+# =======================================
+# 📦 Rotas relacionadas ao modelo Serviço
+# =======================================
+
+# Criação do blueprint para agrupar as rotas de serviço
 servico_route = Blueprint('servico_route', __name__)
 
-# Rota para criar um novo serviço (POST /servicos)
+# 🔹 Criar um novo serviço
+# POST /servicos
 @servico_route.route('/servicos', methods=['POST'])
 def route_criar_servico():
     return create_servico()
 
-# Rota para listar todos os serviços (GET /servicos)
+# 🔹 Listar todos os serviços
+# GET /servicos
 @servico_route.route('/servicos', methods=['GET'])
 def route_listar_servicos():
     return listar_servicos()
 
-# Rota para atualizar um serviço existente (PUT /servicos/<id>)
+# 🔹 Atualizar um serviço existente
+# PUT /servicos/<id>
 @servico_route.route('/servicos/<int:id>', methods=['PUT'])
 def route_atualizar_servico(id):
     return atualizar_servico(id)
 
-# Rota para deletar um serviço (DELETE /servicos/<int:id>)
+# 🔹 Deletar um serviço
+# DELETE /servicos/<id>
 @servico_route.route('/servicos/<int:id>', methods=['DELETE'])
 def route_deletar_servico(id):
     return deletar_servico(id)

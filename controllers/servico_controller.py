@@ -1,65 +1,68 @@
-from flask import request, jsonify, Response  # Importa funções do Flask para lidar com requisições HTTP e respostas JSON
-from models.models import db, Servico          # Importa o banco de dados e o modelo Servico
-import json                                    # Importa json para trabalhar com formatação de resposta
+from flask import request, jsonify, Response  # Importa funções do Flask para requisições/respostas
+from models.models import db, Servico         # Importa banco e modelo Servico
+import json                                   # Para codificação de respostas com acentuação
 
-# Função para criar um novo serviço
+# ✅ Criar um novo serviço
 def create_servico():
-    data = request.get_json()  # Pega os dados enviados no corpo da requisição
+    data = request.get_json()
 
     nome = data.get("nome")
     preco = data.get("preco")
 
-    # Validação: nome e preço são obrigatórios
     if not nome or preco is None:
-        return jsonify({"erro": "Nome e preço são obrigatórios."}), 400  # Retorna erro 400 (Bad Request)
+        erro = {"erro": "Nome e preço são obrigatórios."}
+        return Response(json.dumps(erro, ensure_ascii=False), mimetype='application/json'), 400
 
-    # Cria um novo serviço com os dados recebidos
     novo_servico = Servico(nome=nome, preco=preco)
-    db.session.add(novo_servico)  # Adiciona à sessão do banco
-    db.session.commit()           # Confirma a transação no banco
+    db.session.add(novo_servico)
+    db.session.commit()
 
-    # Mensagem de sucesso com codificação correta para acentuação
-    mensagem = {"mensagem": "Serviço criado com sucesso!"}
-    return Response(json.dumps(mensagem, ensure_ascii=False), mimetype='application/json'), 201
+    return Response(json.dumps({
+    "mensagem": "Serviço criado com sucesso!",
+    "id": novo_servico.id
+}, ensure_ascii=False), mimetype='application/json'), 201
 
-# Função para listar todos os serviços cadastrados
+# 🔍 Listar todos os serviços
 def listar_servicos():
-    servicos = Servico.query.all()  # Busca todos os serviços no banco
+    servicos = Servico.query.all()
     resultado = []
 
-    # Constrói a lista com os dados formatados
     for servico in servicos:
         resultado.append({
             "id": servico.id,
             "nome": servico.nome,
-            "preco": float(servico.preco)  # Converte Decimal para float
+            "preco": float(servico.preco)  # Converte para float (caso venha como Decimal)
         })
 
-    return jsonify(resultado)  # Retorna a lista em formato JSON
+    return Response(json.dumps(resultado, ensure_ascii=False), mimetype='application/json')
 
-# Função para atualizar um serviço existente pelo ID
+# 📝 Atualizar serviço por ID
 def atualizar_servico(id):
-    servico = Servico.query.get(id)  # Busca o serviço pelo ID
+    servico = Servico.query.get(id)
 
     if not servico:
-        return jsonify({"erro": "Serviço não encontrado."}), 404
+        erro = {"erro": "Serviço não encontrado."}
+        return Response(json.dumps(erro, ensure_ascii=False), mimetype='application/json'), 404
 
-    data = request.get_json()  # Pega os dados enviados
-
-    # Atualiza os campos se forem enviados, senão mantém os antigos
+    data = request.get_json()
     servico.nome = data.get("nome", servico.nome)
     servico.preco = data.get("preco", servico.preco)
 
-    db.session.commit()  # Salva as alterações no banco
-    return jsonify({"mensagem": "Serviço atualizado com sucesso!"})
+    db.session.commit()
 
-# Função para deletar um serviço pelo ID
+    mensagem = {"mensagem": "Serviço atualizado com sucesso!"}
+    return Response(json.dumps(mensagem, ensure_ascii=False), mimetype='application/json')
+
+# ❌ Deletar serviço por ID
 def deletar_servico(id):
     servico = Servico.query.get(id)
 
     if not servico:
-        return jsonify({"erro": "Serviço não encontrado."}), 404
+        erro = {"erro": "Serviço não encontrado."}
+        return Response(json.dumps(erro, ensure_ascii=False), mimetype='application/json'), 404
 
-    db.session.delete(servico)  # Remove da sessão
-    db.session.commit()         # Aplica a remoção
-    return jsonify({"mensagem": "Serviço deletado com sucesso!"})
+    db.session.delete(servico)
+    db.session.commit()
+
+    mensagem = {"mensagem": "Serviço deletado com sucesso!"}
+    return Response(json.dumps(mensagem, ensure_ascii=False), mimetype='application/json')

@@ -1,0 +1,23 @@
+### Criar serviço fixo
+POST http://localhost:5000/servicos
+Content-Type: application/json
+
+{
+  "nome": "Banho e Tosa",
+  "preco": 59.90
+}
+
+### Listar serviços
+GET http://localhost:5000/servicos
+
+### Atualizar serviço fixo
+PUT http://localhost:5000/servicos/1
+Content-Type: application/json
+
+{
+  "nome": "Tosa Higiênica",
+  "preco": 49.90
+}
+
+### Deletar serviço fixo
+DELETE http://localhost:5000/servicos/1

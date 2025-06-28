@@ -1,29 +1,32 @@
-from flask import request, jsonify                 # Importa objetos do Flask para manipular requisições e respostas JSON
-from models.models import db, Pet                  # Importa o banco de dados e o modelo Pet
-from models.models import Cliente                  # Importa o modelo Cliente (para relacionamento)
+from flask import request, jsonify, Response  # Importa Flask para manipular requisições e respostas
+from models.models import db, Pet, Cliente     # Importa os modelos e banco
+import json                                   # Para formatação JSON com acentuação
 
-# Função para criar um novo pet
+# ✅ Criar um novo pet
 def create_pet():
-    data = request.get_json()                     # Pega o JSON enviado na requisição
+    data = request.get_json()
 
     nome = data.get("nome")
     especie = data.get("especie")
     cliente_id = data.get("cliente_id")
 
-    # Validação: todos os campos são obrigatórios
     if not nome or not especie or not cliente_id:
-        return jsonify({"erro": "Nome, espécie e cliente_id são obrigatórios."}), 400
+        return Response(json.dumps(
+            {"erro": "Nome, espécie e cliente_id são obrigatórios."},
+            ensure_ascii=False), mimetype='application/json'), 400
 
-    # Cria o novo pet e salva no banco
     novo_pet = Pet(nome=nome, especie=especie, cliente_id=cliente_id)
     db.session.add(novo_pet)
     db.session.commit()
 
-    return jsonify({"mensagem": "Pet criado com sucesso!"}), 201
+    return Response(json.dumps({
+    "mensagem": "Pet criado com sucesso!",
+    "id": novo_pet.id
+}, ensure_ascii=False), mimetype='application/json'), 201
 
-# Função para listar todos os pets
+# 🔍 Listar todos os pets
 def listar_pets():
-    pets = Pet.query.all()    # Busca todos os pets cadastrados
+    pets = Pet.query.all()
     resultado = []
 
     for pet in pets:
@@ -31,40 +34,48 @@ def listar_pets():
             "id": pet.id,
             "nome": pet.nome,
             "especie": pet.especie,
-            "cliente_id": pet.cliente_id  # Mostra o ID do dono (cliente)
+            "cliente_id": pet.cliente_id
         })
 
-    return jsonify(resultado)
+    return Response(json.dumps(resultado, ensure_ascii=False), mimetype='application/json')
 
-# Função para atualizar os dados de um pet
+
+# 📝 Atualizar pet
 def atualizar_pet(id):
-    pet = Pet.query.get(id)  # Busca o pet pelo ID
+    pet = Pet.query.get(id)
 
     if not pet:
-        return jsonify({"erro": "Pet não encontrado."}), 404
+        return Response(json.dumps(
+            {"erro": "Pet não encontrado."},
+            ensure_ascii=False), mimetype='application/json'), 404
 
     data = request.get_json()
-    # Atualiza os dados enviados (se não vierem, mantém os antigos)
     pet.nome = data.get("nome", pet.nome)
     pet.especie = data.get("especie", pet.especie)
     pet.cliente_id = data.get("cliente_id", pet.cliente_id)
 
     db.session.commit()
-    return jsonify({"mensagem": "Pet atualizado com sucesso!"})
+    return Response(json.dumps(
+        {"mensagem": "Pet atualizado com sucesso!"},
+        ensure_ascii=False), mimetype='application/json')
 
-# Função para deletar um pet
+# ❌ Deletar pet
 def deletar_pet(id):
     pet = Pet.query.get(id)
 
     if not pet:
-        return jsonify({"erro": "Pet não encontrado."}), 404
+        return Response(json.dumps(
+            {"erro": "Pet não encontrado."},
+            ensure_ascii=False), mimetype='application/json'), 404
 
     db.session.delete(pet)
     db.session.commit()
 
-    return jsonify({"mensagem": "Pet deletado com sucesso!"})
+    return Response(json.dumps(
+        {"mensagem": "Pet deletado com sucesso!"},
+        ensure_ascii=False), mimetype='application/json')
 
-# Função para listar pets junto com os dados do dono (cliente)
+# 🔷 Listar pets com dono
 def listar_pets_com_dono():
     pets = Pet.query.all()
     resultado = []
@@ -82,4 +93,5 @@ def listar_pets_com_dono():
             }
         })
 
-    return jsonify(resultado)
+    return Response(json.dumps(resultado, ensure_ascii=False), mimetype='application/json')
+

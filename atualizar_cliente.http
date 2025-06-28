@@ -1,8 +1,0 @@
-PUT http://127.0.0.1:5000/clientes/1
-Content-Type: application/json
-
-{
-  "nome": "Carlos Atualizado",
-  "email": "novo@email.com",
-  "telefone": "11988887777"
-}

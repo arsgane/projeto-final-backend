@@ -6,29 +6,32 @@ from controllers.agendamento_controller import (
     atualizar_agendamento
 )
 
-# 📘 Cria o blueprint para as rotas de agendamento
+# ==========================================
+# 📅 Blueprint de Rotas para Agendamentos
+# ==========================================
+
 agendamento_route = Blueprint('agendamento_route', __name__)
 
-# ==========================================
-# 🔧 ROTAS DE AGENDAMENTO
-# ==========================================
-
-# 👉 Rota para criar um novo agendamento (POST)
+# 🔹 Criar um novo agendamento
+# POST /agendamentos
 @agendamento_route.route('/agendamentos', methods=['POST'])
 def route_criar_agendamento():
     return criar_agendamento()
 
-# 👉 Rota para listar todos os agendamentos (GET)
+# 🔹 Listar todos os agendamentos
+# GET /agendamentos
 @agendamento_route.route('/agendamentos', methods=['GET'])
 def route_listar_agendamentos():
     return listar_agendamentos()
 
-# 👉 Rota para deletar um agendamento por ID (DELETE)
+# 🔹 Deletar um agendamento por ID
+# DELETE /agendamentos/<id>
 @agendamento_route.route('/agendamentos/<int:id>', methods=['DELETE'])
 def route_deletar_agendamento(id):
     return deletar_agendamento(id)
 
-# 👉 Rota para atualizar um agendamento por ID (PUT)
+# 🔹 Atualizar agendamento por ID
+# PUT /agendamentos/<id>
 @agendamento_route.route('/agendamentos/<int:id>', methods=['PUT'])
 def route_atualizar_agendamento(id):
     return atualizar_agendamento(id)
