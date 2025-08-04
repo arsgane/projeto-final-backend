@@ -1,0 +1,19 @@
+
+### 🔐 LOGIN - Cliente (copie o access_token manualmente)
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+  "email": "cliente@petshop.com",
+  "senha": "cliente123"
+}
+
+### 💳 FINALIZAR COMPRA - TOKEN COLADO DIRETAMENTE
+POST http://localhost:5000/api/pagamento/finalizar-compra
+Content-Type: application/json
+Authorization: Bearer SEU_TOKEN_JWT_AQUI
+
+{
+  "forcar": "ok"
+}
+### 💳 FINALIZAR COMPRA - TOKEN COLOC

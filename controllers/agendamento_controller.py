@@ -1,10 +1,14 @@
 from flask import request, jsonify, Response
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from models.models import db, Agendamento, Pet, Servico
 from datetime import datetime
 import json
 
-# ✅ Criar agendamento
+# ✅ Criar agendamento (cliente agenda para o próprio pet)
+@jwt_required()
 def criar_agendamento():
+    identidade = get_jwt_identity()
+    claims = get_jwt()
     data = request.get_json()
 
     data_hora_str = data.get("data_hora")
@@ -15,6 +19,14 @@ def criar_agendamento():
         return Response(json.dumps(
             {"erro": "data_hora, pet_id e servico_id são obrigatórios."},
             ensure_ascii=False), mimetype='application/json'), 400
+
+    # ✅ Se cliente tentar agendar para pet que não é dele, bloquear
+    if claims["tipo"] != "admin":
+        pet = Pet.query.get(pet_id)
+        if not pet or pet.cliente_id != identidade:
+            return Response(json.dumps(
+                {"erro": "Você só pode agendar para seus próprios pets."},
+                ensure_ascii=False), mimetype='application/json'), 403
 
     try:
         data_hora = datetime.strptime(data_hora_str, "%Y-%m-%d %H:%M")
@@ -28,18 +40,32 @@ def criar_agendamento():
     db.session.commit()
 
     return Response(json.dumps({
-    "mensagem": "Agendamento criado com sucesso!",
-    "id": novo.id
-}, ensure_ascii=False), mimetype='application/json'), 201
+        "mensagem": "Agendamento criado com sucesso!",
+        "id": novo.id
+    }, ensure_ascii=False), mimetype='application/json'), 201
 
-# 🔍 Listar agendamentos
+# 🔍 Listar agendamentos (admin vê tudo, cliente vê os seus)
+@jwt_required()
 def listar_agendamentos():
-    agendamentos = Agendamento.query.all()
+    identidade = get_jwt_identity()
+    claims = get_jwt()
+
+    if claims["tipo"] == "admin":
+        agendamentos = Agendamento.query.all()
+    else:
+        # Filtra agendamentos apenas dos pets do cliente logado
+        agendamentos = (
+            db.session.query(Agendamento)
+            .join(Pet)
+            .filter(Pet.cliente_id == identidade)
+            .all()
+        )
+
     resultado = []
 
     for ag in agendamentos:
         if not ag.pet or not ag.servico or not ag.pet.cliente:
-            continue  # Ignora registros corrompidos
+            continue
 
         resultado.append({
             "id": ag.id,
@@ -61,8 +87,13 @@ def listar_agendamentos():
 
     return Response(json.dumps(resultado, ensure_ascii=False), mimetype='application/json')
 
-# ❌ Deletar agendamento
+# ❌ Deletar agendamento (apenas admin)
+@jwt_required()
 def deletar_agendamento(id):
+    claims = get_jwt()
+    if claims["tipo"] != "admin":
+        return jsonify({"erro": "Apenas administradores podem excluir agendamentos."}), 403
+
     ag = Agendamento.query.get(id)
     if not ag:
         return Response(json.dumps(
@@ -75,8 +106,13 @@ def deletar_agendamento(id):
         {"mensagem": "Agendamento deletado com sucesso!"},
         ensure_ascii=False), mimetype='application/json')
 
-# 📝 Atualizar agendamento
+# 📝 Atualizar agendamento (apenas admin)
+@jwt_required()
 def atualizar_agendamento(id):
+    claims = get_jwt()
+    if claims["tipo"] != "admin":
+        return jsonify({"erro": "Apenas administradores podem atualizar agendamentos."}), 403
+
     agendamento = Agendamento.query.get(id)
     if not agendamento:
         return Response(json.dumps(

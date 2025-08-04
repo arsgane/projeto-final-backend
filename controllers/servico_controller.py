@@ -1,9 +1,15 @@
-from flask import request, jsonify, Response  # Importa funções do Flask para requisições/respostas
-from models.models import db, Servico         # Importa banco e modelo Servico
-import json                                   # Para codificação de respostas com acentuação
+from flask import request, jsonify, Response
+from flask_jwt_extended import jwt_required, get_jwt
+from models.models import db, Servico
+import json
 
-# ✅ Criar um novo serviço
+# ✅ Criar um novo serviço (somente ADMIN)
+@jwt_required()
 def create_servico():
+    claims = get_jwt()
+    if claims["tipo"] != "admin":
+        return jsonify({"erro": "Apenas administradores podem criar serviços."}), 403
+
     data = request.get_json()
 
     nome = data.get("nome")
@@ -18,11 +24,11 @@ def create_servico():
     db.session.commit()
 
     return Response(json.dumps({
-    "mensagem": "Serviço criado com sucesso!",
-    "id": novo_servico.id
-}, ensure_ascii=False), mimetype='application/json'), 201
+        "mensagem": "Serviço criado com sucesso!",
+        "id": novo_servico.id
+    }, ensure_ascii=False), mimetype='application/json'), 201
 
-# 🔍 Listar todos os serviços
+# 🔍 Listar todos os serviços (público)
 def listar_servicos():
     servicos = Servico.query.all()
     resultado = []
@@ -31,13 +37,18 @@ def listar_servicos():
         resultado.append({
             "id": servico.id,
             "nome": servico.nome,
-            "preco": float(servico.preco)  # Converte para float (caso venha como Decimal)
+            "preco": float(servico.preco)
         })
 
     return Response(json.dumps(resultado, ensure_ascii=False), mimetype='application/json')
 
-# 📝 Atualizar serviço por ID
+# 📝 Atualizar serviço por ID (somente ADMIN)
+@jwt_required()
 def atualizar_servico(id):
+    claims = get_jwt()
+    if claims["tipo"] != "admin":
+        return jsonify({"erro": "Apenas administradores podem atualizar serviços."}), 403
+
     servico = Servico.query.get(id)
 
     if not servico:
@@ -53,8 +64,13 @@ def atualizar_servico(id):
     mensagem = {"mensagem": "Serviço atualizado com sucesso!"}
     return Response(json.dumps(mensagem, ensure_ascii=False), mimetype='application/json')
 
-# ❌ Deletar serviço por ID
+# ❌ Deletar serviço por ID (somente ADMIN)
+@jwt_required()
 def deletar_servico(id):
+    claims = get_jwt()
+    if claims["tipo"] != "admin":
+        return jsonify({"erro": "Apenas administradores podem excluir serviços."}), 403
+
     servico = Servico.query.get(id)
 
     if not servico:

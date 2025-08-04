@@ -1,25 +1,54 @@
-### Criar cliente fixo
+
+### 🔹 CADASTRAR NOVO CLIENTE
 POST http://localhost:5000/clientes
 Content-Type: application/json
 
 {
-  "nome": "Carlos Silva",
-  "email": "carlos@teste.com",
-  "telefone": "11999998888"
+  "nome": "João Pet",
+  "email": "joao@teste.com",
+  "telefone": "11988887777",
+  "senha": "123456"
 }
 
-### Listar clientes
-GET http://localhost:5000/clientes
 
-### Atualizar cliente fixo
-PUT http://localhost:5000/clientes/1
+### 🔐 LOGIN CLIENTE
+POST http://localhost:5000/clientes/login
 Content-Type: application/json
 
 {
-  "nome": "Carlos Atualizado",
-  "email": "carlos_atualizado@teste.com",
-  "telefone": "11999997777"
+  "email": "joao@teste.com",
+  "senha": "123456"
 }
 
-### Deletar cliente fixo
-DELETE http://localhost:5000/clientes/1
+
+### 🛒 CONSULTAR CARRINHO (AUTENTICADO)
+GET http://localhost:5000/carrinho
+Authorization: Bearer {{ token_cliente }}
+
+
+### ➕ ADICIONAR ITEM AO CARRINHO
+POST http://localhost:5000/carrinho
+Content-Type: application/json
+Authorization: Bearer {{ token_cliente }}
+
+{
+  "produto_id": 1,
+  "quantidade": 2,
+  "nome": "Ração Premium",
+  "tipo": "produto",
+  "preco": 89.90
+}
+
+### ❌ REMOVER ITEM DO CARRINHO
+DELETE http://localhost:5000/carrinho/1
+Authorization: Bearer {{ token_cliente }}
+
+
+### 💳 FINALIZAR PAGAMENTO (PIX SIMULADO)
+POST http://localhost:5000/pagamento/finalizar-compra
+Content-Type: application/json
+Authorization: Bearer {{ token_cliente }}
+
+{
+  "forma_pagamento": "pix"
+}

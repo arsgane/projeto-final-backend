@@ -1,0 +1,28 @@
+### 🔐 LOGIN (pegar token JWT)
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+  "email": "cliente@email.com",
+  "senha": "123456"
+}
+
+### 🛒 ADICIONAR ITEM AO CARRINHO
+POST http://localhost:5000/carrinho
+Authorization: Bearer {{ token }}
+Content-Type: application/json
+
+{
+  "nome": "Ração Golden",
+  "tipo": "produto",
+  "preco": 49.90,
+  "quantidade": 2
+}
+
+### 📦 LISTAR ITENS DO CARRINHO
+GET http://localhost:5000/carrinho
+Authorization: Bearer {{ token }}
+
+### 🗑 REMOVER ITEM DO CARRINHO (troque o ID)
+DELETE http://localhost:5000/carrinho/1
+Authorization: Bearer {{ token }}
