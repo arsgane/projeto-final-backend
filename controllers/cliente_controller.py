@@ -66,7 +66,10 @@ def create_cliente():
 # ================================================
 # 🔐 Login do Cliente
 # ================================================
+# 🔐 Login do Cliente — atualizado com criação automática de carrinho
 def login_cliente():
+    from models.models import Carrinho  # adicionado aqui dentro para evitar import circular
+
     data = request.get_json()
     email = data.get("email")
     senha = data.get("senha")
@@ -84,6 +87,13 @@ def login_cliente():
             json.dumps({"erro": "Credenciais inválidas."}, ensure_ascii=False),
             status=401, mimetype='application/json'
         )
+
+    # ✅ Cria carrinho automaticamente se não existir
+    carrinho_existente = Carrinho.query.filter_by(cliente_id=cliente.id).first()
+    if not carrinho_existente:
+        novo_carrinho = Carrinho(cliente_id=cliente.id)
+        db.session.add(novo_carrinho)
+        db.session.commit()
 
     token = create_access_token(identity={
         "id": cliente.id,
